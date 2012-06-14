@@ -8,12 +8,18 @@ class MoviesController < ApplicationController
 
 
   def index
-    if(params[:sort_by] != nil)
-      @movies = Movie.order(params[:sort_by])
-      @sorted_by = params[:sort_by]
-    else
-      @movies = Movie.all
-    end
+    @all_ratings=Movie.select(:rating).map{|r| r.rating}.uniq
+    logger.debug('all_ratings:'+@all_ratings.to_s)
+      if(params[:sort_by] != nil)
+        @movies = Movie.order(params[:sort_by])
+        @sorted_by = params[:sort_by]
+      else
+        @movies = Movie.all
+      end
+      if(params[:ratings] != nil)
+        @movies.each{ |movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
+        @movies = @movies.find_all{|movie| params[:ratings][movie.rating] == "1"}
+      end
   end
 
   def new
