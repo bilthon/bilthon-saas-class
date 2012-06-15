@@ -13,6 +13,9 @@ class MoviesController < ApplicationController
       if(params[:sort_by] != nil)
         @movies = Movie.order(params[:sort_by])
         @sorted_by = params[:sort_by]
+        session[:sort_by] = @sorted_by
+      elsif(session[:sort_by] != nil)
+        @movies = Movie.order(session[:sort_by])
       else
         @movies = Movie.all
       end
