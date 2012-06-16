@@ -19,9 +19,21 @@ class MoviesController < ApplicationController
       else
         @movies = Movie.all
       end
+
+      #If flash had nothing, creating a hash inside a hash
+      if flash[:ratings] == nil
+        flash[:ratings] = Hash.new
+      end
+
+      #Filtering movies out
       if(params[:ratings] != nil)
         @movies.each{ |movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
-        @movies = @movies.find_all{|movie| params[:ratings][movie.rating] == "1"}
+        @movies = @movies.find_all{|movie| 
+          params[:ratings][movie.rating] == "true"
+        }
+        @movies.each do |movie|
+          flash[:ratings][movie.rating] = true
+        end
       end
   end
 

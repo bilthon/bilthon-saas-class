@@ -4,14 +4,14 @@
   Include: 
   - @all_ratings.each do |rating|
     = rating
-    = check_box_tag "ratings[#{rating}]"
+    = check_box_tag "ratings[#{rating}]","true",flash[:ratings][rating]
   = submit_tag 'Refresh'
 %table#movies
   %thead
     %tr
-      %th{:class => highlighter("title")}=link_to "Movie Title", {:controller => "movies", :action => "index", :sort_by => "title"}, {:id => "title_header"}
+      %th{:class => highlighter("title")}=link_to "Movie Title", {:controller => "movies", :action => "index", :sort_by => "title",:ratings => flash[:ratings]}, {:id => "title_header"}
       %th Rating
-      %th{:class => highlighter("release_date")}=link_to "Release Date", {:controller => "movies", :action => "index", :sort_by => "release_date"},{:id =>"release_date_header"}
+      %th{:class => highlighter("release_date")}=link_to "Release Date", {:controller => "movies", :ratings => flash[:ratings] ,:action => "index", :sort_by => "release_date"},{:id =>"release_date_header"}
       %th More Info
   %tbody
     - @movies.each do |movie|
