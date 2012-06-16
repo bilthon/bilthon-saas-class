@@ -20,20 +20,29 @@ class MoviesController < ApplicationController
         @movies = Movie.all
       end
 
-      #If flash had nothing, creating a hash inside a hash
-      if flash[:ratings] == nil
-        flash[:ratings] = Hash.new
+      #If session had nothing, creating a hash inside a hash
+      if session[:ratings] == nil
+        session[:ratings] = Hash.new
       end
 
-      #Filtering movies out
+      # Filtering movies out
+      # First we check the params to see if we have a ratings
       if(params[:ratings] != nil)
+        # Logging purposes
         @movies.each{ |movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
-        @movies = @movies.find_all{|movie| 
-          params[:ratings][movie.rating] == "true"
-        }
+        
+        # Filtering movies using information passed as a parameter
+        @movies = @movies.find_all{|movie| params[:ratings][movie.rating] == "true"}
+
+        # Reseting session[:ratings] hash, it will contain new values now
+        session[:ratings].clear
         @movies.each do |movie|
-          flash[:ratings][movie.rating] = true
+          session[:ratings][movie.rating] = true
         end
+      elsif(session[:ratings].size != 0)
+      @movies.each{|movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
+      # Filtering movies using information stored at session
+        @movies = @movies.find_all{ |movie| session[:ratings][movie.rating] == "true"}
       end
   end
 
