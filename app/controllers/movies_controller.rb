@@ -46,7 +46,8 @@ class MoviesController < ApplicationController
         logger.debug('filtering some movies out based on session')
         @movies.each{|movie| logger.debug("session[#{:ratings}][#{movie.rating}]: "+session[:ratings][movie.rating].inspect)}
         # Filtering movies using information stored at session
-        @movies = @movies.find_all{ |movie| session[:ratings][movie.rating] == "true"}
+        @movies.find_all{ |movie| session[:ratings][movie.rating] == "true"}
+        redirect_to :ratings => session[:ratings]
       end
   end
 
