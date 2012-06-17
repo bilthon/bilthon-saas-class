@@ -15,8 +15,10 @@ class MoviesController < ApplicationController
         @sorted_by = params[:sort_by]
         session[:sort_by] = @sorted_by
       elsif(session[:sort_by] != nil)
+        logger.debug('getting all movies, but sorting them')
         @movies = Movie.order(session[:sort_by])
       else
+        logger.debug('just getting all the movies, without sorting or filtering')
         @movies = Movie.all
       end
 
@@ -29,6 +31,7 @@ class MoviesController < ApplicationController
       # First we check the params to see if we have a ratings
       if(params[:ratings] != nil)
         # Logging purposes
+        logger.debug('filtering some movies out based on params')
         @movies.each{ |movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
         
         # Filtering movies using information passed as a parameter
@@ -37,11 +40,12 @@ class MoviesController < ApplicationController
         # Reseting session[:ratings] hash, it will contain new values now
         session[:ratings].clear
         @movies.each do |movie|
-          session[:ratings][movie.rating] = true
+          session[:ratings][movie.rating] = "true"
         end
       elsif(session[:ratings].size != 0)
-      @movies.each{|movie| logger.debug("params[#{:ratings}][#{movie.rating}]: "+params[:ratings][movie.rating].inspect)}
-      # Filtering movies using information stored at session
+        logger.debug('filtering some movies out based on session')
+        @movies.each{|movie| logger.debug("session[#{:ratings}][#{movie.rating}]: "+session[:ratings][movie.rating].inspect)}
+        # Filtering movies using information stored at session
         @movies = @movies.find_all{ |movie| session[:ratings][movie.rating] == "true"}
       end
   end
